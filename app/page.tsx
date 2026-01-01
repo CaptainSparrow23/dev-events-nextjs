@@ -1,31 +1,13 @@
 import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
 import { IEvent } from "@/database/event.model";
+import { getAllEvents } from "@/lib/actions/event.actions";
 import { cacheLife } from "next/cache";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Home = async () => {
   "use cache";
   cacheLife("hours");
-  const response = await fetch(`${BASE_URL}/api/events`);
-
-  if (!response.ok) {
-    const raw = await response.text();
-    throw new Error(
-      `GET /api/events failed: ${response.status} ${raw.slice(0, 200)}`
-    );
-  }
-
-  const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("application/json")) {
-    const raw = await response.text();
-    throw new Error(
-      `Expected JSON, got ${contentType}. Body: ${raw.slice(0, 200)}`
-    );
-  }
-
-  const { events } = await response.json();
+  const events = await getAllEvents();
 
   return (
     <section>
