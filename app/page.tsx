@@ -1,14 +1,31 @@
+import { Suspense } from "react";
 import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
 import { IEvent } from "@/database/event.model";
 import { getAllEvents } from "@/lib/actions/event.actions";
 import { cacheLife } from "next/cache";
 
-const Home = async () => {
+const EventsList = async () => {
   "use cache";
   cacheLife("hours");
   const events = await getAllEvents();
 
+  return (
+    <ul className="events list-none">
+      {events?.length ? (
+        events.map((event: IEvent) => (
+          <li key={event._id.toString() || event.slug}>
+            <EventCard {...event} />
+          </li>
+        ))
+      ) : (
+        <li>No events found</li>
+      )}
+    </ul>
+  );
+};
+
+const Home = () => {
   return (
     <section>
       <h1 className="text-center">
@@ -22,17 +39,9 @@ const Home = async () => {
 
       <div className="mt-20 space-y-7">
         <h3>Featured Events</h3>
-        <ul className="events list-none">
-          {events?.length ? (
-            events.map((event: IEvent) => (
-              <li key={event._id.toString() || event.slug}>
-                <EventCard {...event} />
-              </li>
-            ))
-          ) : (
-            <li>No events found</li>
-          )}
-        </ul>
+        <Suspense fallback={<p>Loading events...</p>}>
+          <EventsList />
+        </Suspense>
       </div>
     </section>
   );
