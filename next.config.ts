@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    cacheComponents: true,
+  },
   images: {
     remotePatterns: [
       {
