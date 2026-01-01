@@ -25,8 +25,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
         }
 
         return NextResponse.json({ message: "Event fetched successfully", event }, { status: 200 });
-
-
-
     }
-}
+    catch (e) {
+        return NextResponse.json({ message: "Event Fetching Failed", error: e }, { status: 500 });
+    }
+};
